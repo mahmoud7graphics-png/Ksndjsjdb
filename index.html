@@ -6,22 +6,10 @@
     <meta name="description" content="رسالة خاصة من القلب">
     <meta name="theme-color" content="#1a0a0a">
     <title>رسالة لكِ 🤍</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Tajawal:wght@300;400;500&family=Marhey:wght@600&display=swap" rel="stylesheet">
-
-    <!-- Preload أول 8 صور -->
-    <link rel="preload" as="image" href="https://i.ibb.co/hJCcMfpy/1.png">
-    <link rel="preload" as="image" href="https://i.ibb.co/hRhXYqB2/2.png">
-    <link rel="preload" as="image" href="https://i.ibb.co/ycryGd5j/3.png">
-    <link rel="preload" as="image" href="https://i.ibb.co/xtYNWhNT/4.png">
-    <link rel="preload" as="image" href="https://i.ibb.co/6JG1Zh77/5.png">
-    <link rel="preload" as="image" href="https://i.ibb.co/7xk7rHbN/6.png">
-    <link rel="preload" as="image" href="https://i.ibb.co/RW6JgTQ/7.png">
-    <link rel="preload" as="image" href="https://i.ibb.co/G3cYPnkd/8.png">
-
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="loading">
 
@@ -119,9 +107,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="letter-modal" id="letterModal">
-                    <div class="letter-paper"><div class="letter-close" id="letterClose"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg></div><div class="letter-content" id="letterContent"></div><p class="letter-signature" id="letterSignature"></p></div>
-                </div>
+                <div class="letter-modal" id="letterModal"></div>
             </div>
         </section>
 
@@ -166,7 +152,7 @@
         </section>
     </main>
 
-    <audio id="bgMusic" preload="auto" loop></audio>
+    <audio id="bgMusic" preload="none" loop></audio>
 
     <div class="lightbox" id="lightbox">
         <div class="lightbox-close" id="lightboxClose"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
@@ -175,7 +161,7 @@
         <button class="lightbox-nav lightbox-next" id="lightboxNext"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg></button>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/main.js"></script>
+    <script src="config.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
