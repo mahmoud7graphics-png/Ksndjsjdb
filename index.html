@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="رسالة خاصة من القلب">
+    <meta name="theme-color" content="#1a0a0a">
+    <title>رسالة لكِ 🤍</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Tajawal:wght@300;400;500&family=Marhey:wght@600&display=swap" rel="stylesheet">
+
+    <!-- Preload أول 8 صور -->
+    <link rel="preload" as="image" href="https://i.ibb.co/hJCcMfpy/1.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/hRhXYqB2/2.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/ycryGd5j/3.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/xtYNWhNT/4.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/6JG1Zh77/5.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/7xk7rHbN/6.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/RW6JgTQ/7.png">
+    <link rel="preload" as="image" href="https://i.ibb.co/G3cYPnkd/8.png">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="loading">
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-flower">
+                <svg width="40" height="40" viewBox="0 0 40 40">
+                    <circle cx="20" cy="20" r="2" fill="#c9a96e" opacity="0.6"/>
+                    <circle cx="20" cy="10" r="1.5" fill="#c9a96e" opacity="0.4"/>
+                    <circle cx="28" cy="14" r="1.5" fill="#c9a96e" opacity="0.4"/>
+                    <circle cx="30" cy="22" r="1.5" fill="#c9a96e" opacity="0.4"/>
+                    <circle cx="24" cy="30" r="1.5" fill="#c9a96e" opacity="0.4"/>
+                    <circle cx="14" cy="30" r="1.5" fill="#c9a96e" opacity="0.4"/>
+                    <circle cx="10" cy="22" r="1.5" fill="#c9a96e" opacity="0.4"/>
+                    <circle cx="12" cy="14" r="1.5" fill="#c9a96e" opacity="0.4"/>
+                </svg>
+            </div>
+            <p class="loading-text">لحظة من فضلك...</p>
+        </div>
+    </div>
+
+    <button class="music-toggle" id="musicToggle" aria-label="تشغيل الموسيقى">
+        <svg class="music-icon-play" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <svg class="music-icon-pause" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+        <span class="music-label">موسيقى</span>
+    </button>
+
+    <button class="volume-toggle" id="volumeToggle" aria-label="التحكم في الصوت">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path class="volume-waves" d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/></svg>
+    </button>
+
+    <div class="volume-slider-container" id="volumeSliderContainer">
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50" orient="vertical">
+    </div>
+
+    <main id="fullpage">
+        <section class="section hero-section" id="hero">
+            <div class="hero-background"></div>
+            <div class="hero-particles" id="heroParticles"></div>
+            <div class="hero-content">
+                <div class="hero-text-container">
+                    <p class="hero-subtitle fade-up" id="heroSubtitle"></p>
+                    <h1 class="hero-title fade-up delay-200" id="heroTitle"></h1>
+                    <p class="hero-description fade-up delay-400" id="heroDescription"></p>
+                    <button class="hero-button fade-up delay-600" id="startButton">
+                        <span id="heroButtonText"></span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <span>اسحبي للأسفل</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+            </div>
+        </section>
+
+        <section class="section videos-section" id="videos">
+            <div class="section-content">
+                <h2 class="section-title reveal" id="videosTitle"></h2>
+                <div class="videos-grid" id="videosGrid"></div>
+            </div>
+        </section>
+
+        <section class="section gallery-section" id="gallery">
+            <div class="section-content">
+                <h2 class="section-title reveal" id="galleryTitle"></h2>
+                <div class="gallery-grid" id="galleryGrid"></div>
+            </div>
+        </section>
+
+        <section class="section messages-section" id="messages">
+            <div class="section-content">
+                <h2 class="section-title reveal" id="messagesTitle"></h2>
+                <div class="messages-container" id="messagesContainer"></div>
+            </div>
+        </section>
+
+        <section class="section timeline-section" id="timeline">
+            <div class="section-content">
+                <h2 class="section-title reveal" id="timelineTitle"></h2>
+                <div class="timeline" id="timelineContainer"></div>
+            </div>
+        </section>
+
+        <section class="section letter-section" id="letter">
+            <div class="section-content">
+                <p class="letter-prompt reveal" id="letterPrompt"></p>
+                <div class="envelope-container" id="envelopeContainer">
+                    <div class="envelope" id="envelope">
+                        <div class="envelope-flap"></div>
+                        <div class="envelope-body">
+                            <div class="envelope-seal">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="letter-modal" id="letterModal">
+                    <div class="letter-paper"><div class="letter-close" id="letterClose"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg></div><div class="letter-content" id="letterContent"></div><p class="letter-signature" id="letterSignature"></p></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section surprise-section" id="surprise">
+            <div class="section-content">
+                <p class="surprise-intro reveal" id="surpriseIntro"></p>
+                <div class="gift-box-container" id="giftBoxContainer">
+                    <div class="gift-box" id="giftBox">
+                        <div class="gift-box-lid"><div class="gift-box-ribbon"></div></div>
+                        <div class="gift-box-body"><div class="gift-box-ribbon-vertical"></div><div class="gift-box-ribbon-horizontal"></div></div>
+                    </div>
+                </div>
+                <div class="surprise-reveal" id="surpriseReveal">
+                    <div class="floating-items" id="floatingItems"></div>
+                    <p class="surprise-message" id="surpriseMessage"></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section final-section" id="final">
+            <div class="section-content">
+                <h2 class="final-title reveal" id="finalTitle"></h2>
+                <p class="final-description reveal" id="finalDescription"></p>
+                <div class="final-buttons reveal" id="finalButtons">
+                    <button class="final-button yes-button" id="yesButton"><span id="yesButtonText"></span></button>
+                    <button class="final-button no-button" id="noButton"><span id="noButtonText"></span></button>
+                </div>
+                <div class="final-response" id="finalResponse">
+                    <p class="response-text" id="responseText"></p>
+                    <button class="final-button final-read-more" id="finalReadMore"><span id="finalReadMoreText"></span></button>
+                </div>
+            </div>
+        </section>
+
+        <section class="section ending-section" id="ending">
+            <div class="section-content">
+                <p class="ending-message reveal" id="endingMessage"></p>
+                <p class="ending-highlight reveal">إنك مهمة عندي.</p>
+                <p class="ending-apology reveal" id="endingApology"></p>
+                <p class="ending-signature reveal" id="endingSignature"></p>
+            </div>
+        </section>
+    </main>
+
+    <audio id="bgMusic" preload="auto" loop></audio>
+
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-close" id="lightboxClose"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+        <div class="lightbox-content"><img src="" alt="" id="lightboxImage"><p class="lightbox-caption" id="lightboxCaption"></p></div>
+        <button class="lightbox-nav lightbox-prev" id="lightboxPrev"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg></button>
+        <button class="lightbox-nav lightbox-next" id="lightboxNext"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg></button>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
