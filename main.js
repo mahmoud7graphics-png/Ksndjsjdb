@@ -1,15 +1,7 @@
-// ============================================
-// 💫 MAIN JAVASCRIPT - محسن للإنترنت البطيء (5MB)
-// ============================================
-
 (function() {
     'use strict';
     let mp = false, cli = 0, gd = [], eo = false, go = false, mt = 0, cv = null;
     let musicRetryInterval = null;
-
-    // ========== إعدادات الأداء للإنترنت الضعيف ==========
-    const SLOW_CONNECTION = true;
-    const PRELOAD_CHUNK_SIZE = 200;
 
     window.addEventListener('load', initApp);
 
@@ -24,44 +16,47 @@
         preloadVisibleContent();
     }
 
-    // ========== تحميل ذكي - يحمل اللي قدام المستخدم بس ==========
     function preloadVisibleContent() {
-        const observer = new IntersectionObserver(function(entries) {
+        const imageObserver = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (entry.isIntersecting) {
                     const img = entry.target;
-                    if (img.dataset.src) {
+                    if (img.dataset && img.dataset.src) {
                         img.src = img.dataset.src;
                         img.removeAttribute('data-src');
+                        img.classList.remove('gallery-img-placeholder');
                     }
-                    observer.unobserve(img);
+                    imageObserver.unobserve(img);
+                }
+            });
+        }, { rootMargin: '400px' });
+
+        const videoObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    const video = entry.target;
+                    if (video.dataset && video.dataset.src && !video.src) {
+                        video.src = video.dataset.src;
+                        video.load();
+                    }
+                    videoObserver.unobserve(video);
                 }
             });
         }, { rootMargin: '300px' });
 
         document.querySelectorAll('img[data-src]').forEach(function(img) {
-            observer.observe(img);
+            imageObserver.observe(img);
         });
 
-        document.querySelectorAll('.video-player').forEach(function(video, i) {
-            if (i < 2 && video.dataset.src) {
-                video.src = video.dataset.src;
-                video.load();
-            }
+        document.querySelectorAll('.video-player[data-src]').forEach(function(video) {
+            videoObserver.observe(video);
         });
 
-        document.querySelectorAll('.video-player').forEach(function(video, i) {
-            if (i >= 2) {
-                const sectionObserver = new IntersectionObserver(function(entries) {
-                    if (entries[0].isIntersecting) {
-                        video.src = video.dataset.src;
-                        video.load();
-                        sectionObserver.unobserve(video);
-                    }
-                }, { rootMargin: '200px' });
-                sectionObserver.observe(video.closest('.video-card'));
-            }
-        });
+        const firstVideo = document.querySelector('.video-player[data-src]');
+        if (firstVideo) {
+            firstVideo.src = firstVideo.dataset.src;
+            firstVideo.load();
+        }
     }
 
     function setupAutoPlayMusic() {
@@ -94,7 +89,6 @@
         document.addEventListener('click', playOnInteraction, { once: true });
         document.addEventListener('scroll', playOnInteraction, { once: true });
         document.addEventListener('touchstart', playOnInteraction, { once: true });
-        document.addEventListener('keydown', playOnInteraction, { once: true });
 
         setTimeout(function() {
             if (musicRetryInterval) { clearInterval(musicRetryInterval); musicRetryInterval = null; }
@@ -136,25 +130,22 @@
         const pb = thumb.querySelector('.video-progress-bar'), gl = thumb.querySelector('.video-glow');
         const card = thumb.closest('.video-card');
 
+        if (!video.src && video.dataset && video.dataset.src) {
+            video.src = video.dataset.src;
+            video.load();
+        }
+
         video.style.display = 'block';
         video.classList.add('active');
         video.muted = false;
         video.volume = 1.0;
         cv = video;
 
-        if (!video.src && video.dataset.src) {
-            video.src = video.dataset.src;
-        }
-
-        video.load();
-
         function startPlayback() {
             video.play().then(function() {
                 pw.classList.add('hidden'); thHint.classList.add('hidden');
                 if (card) card.classList.add('playing'); if (gl) gl.classList.add('active');
                 video.addEventListener('timeupdate', function() { if (video.duration && pb) pb.style.width = (video.currentTime / video.duration) * 100 + '%'; });
-                video.addEventListener('waiting', function() { if (gl) gl.classList.add('active'); });
-                video.addEventListener('playing', function() { if (gl) gl.classList.remove('active'); });
                 video.addEventListener('ended', function() {
                     pw.classList.remove('hidden'); thHint.classList.remove('hidden');
                     if (card) card.classList.remove('playing'); if (gl) gl.classList.remove('active');
@@ -171,14 +162,8 @@
             });
         }
 
-        if (video.readyState >= 2) {
-            startPlayback();
-        } else {
-            video.addEventListener('canplay', function onReady() {
-                startPlayback();
-                video.removeEventListener('canplay', onReady);
-            }, { once: true });
-        }
+        if (video.readyState >= 2) { startPlayback(); }
+        else { video.addEventListener('canplay', function onReady() { startPlayback(); video.removeEventListener('canplay', onReady); }, { once: true }); }
     }
 
     function hideLoadingScreen() {
@@ -217,26 +202,10 @@
             card.className = 'video-card reveal';
             card.style.animationDelay = (i * 0.2) + 's';
             card.setAttribute('data-video-index', i);
-            card.innerHTML = `
-                <div class="video-number-badge">${String(i + 1).padStart(2, '0')}</div>
-                <div class="video-thumbnail" style="background: ${grads[i % 4]};">
-                    <div class="video-bg-particles"></div>
-                    <div class="video-play-icon-wrapper"><div class="video-play-ripple"></div><div class="video-play-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div>
-                    <p class="video-tap-hint">اضغطي للمشاهدة 🎬</p>
-                    <video class="video-player" preload="none" playsinline webkit-playsinline data-src="${v.src}" muted></video>
-                    <div class="video-progress"><div class="video-progress-bar"></div></div>
-                    <div class="video-glow"></div>
-                </div>
-                <div class="video-info"><h3 class="video-title">${v.title}</h3><p class="video-love-quote">${v.loveQuote}</p><div class="video-info-divider"></div></div>`;
+            card.innerHTML = `<div class="video-number-badge">${String(i + 1).padStart(2, '0')}</div><div class="video-thumbnail" style="background: ${grads[i % 4]};"><div class="video-bg-particles"></div><div class="video-play-icon-wrapper"><div class="video-play-ripple"></div><div class="video-play-circle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div></div><p class="video-tap-hint">اضغطي للمشاهدة 🎬</p><video class="video-player" preload="none" playsinline webkit-playsinline data-src="${v.src}" muted></video><div class="video-progress"><div class="video-progress-bar"></div></div><div class="video-glow"></div></div><div class="video-info"><h3 class="video-title">${v.title}</h3><p class="video-love-quote">${v.loveQuote}</p><div class="video-info-divider"></div></div>`;
             grid.appendChild(card);
         });
-        document.querySelectorAll('.video-bg-particles').forEach(function(c) {
-            for (let i = 0; i < 6; i++) {
-                const p = document.createElement('div'); p.className = 'video-particle';
-                p.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s;animation-duration:${Math.random()*3+3}s;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;`;
-                c.appendChild(p);
-            }
-        });
+        document.querySelectorAll('.video-bg-particles').forEach(function(c) { for (let i = 0; i < 6; i++) { const p = document.createElement('div'); p.className = 'video-particle'; p.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s;animation-duration:${Math.random()*3+3}s;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;`; c.appendChild(p); } });
         document.querySelectorAll('.video-thumbnail').forEach(function(thumb) {
             thumb.addEventListener('click', function() {
                 const video = this.querySelector('.video-player');
@@ -263,7 +232,7 @@
             div.className = 'gallery-item reveal';
             div.setAttribute('data-index', i);
             div.style.animationDelay = (i * 0.1) + 's';
-            div.innerHTML = `<div class="gallery-image-wrapper"><img src="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22><rect fill=%22%231a1415%22 width=%22400%22 height=%22400%22 rx=%2216%22/><text fill=%22%23a09484%22 x=%2250%25%22 y=%2250%25%22 dy=%22.3em%22 font-size=%2216%22>🤍</text></svg>" data-src="${item.src}" alt="${item.caption}" loading="lazy" decoding="async" class="gallery-img-placeholder"><div class="gallery-shine"></div></div><div class="gallery-caption-container"><p class="gallery-caption">${item.caption}</p></div><div class="gallery-hover-glow"></div>`;
+            div.innerHTML = `<div class="gallery-image-wrapper"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%231a1415' width='400' height='400' rx='16'/%3E%3Ctext fill='%23a09484' x='50%25' y='50%25' text-anchor='middle' dy='.3em' font-size='16'%3E🤍%3C/text%3E%3C/svg%3E" data-src="${item.src}" alt="${item.caption}" loading="lazy" decoding="async" class="gallery-img-placeholder"><div class="gallery-shine"></div></div><div class="gallery-caption-container"><p class="gallery-caption">${item.caption}</p></div><div class="gallery-hover-glow"></div>`;
             div.addEventListener('click', function() { openLightbox(i); });
             grid.appendChild(div);
         });
@@ -305,11 +274,7 @@
             d.style.animationDelay = (i * 0.15) + 's';
             d.innerHTML = `<div class="message-number">${String(i + 1).padStart(2, '0')}</div><p class="message-text">${m}</p><div class="message-progress"><div class="message-dot${i === 0 ? ' filled' : ''}"></div></div>`;
             d.addEventListener('click', function() {
-                document.querySelectorAll('.message-item').forEach(function(item, j) {
-                    item.classList.remove('active', 'current');
-                    const dot = item.querySelector('.message-dot'); if (dot) dot.classList.remove('filled');
-                    if (j <= i) { item.classList.add('active'); const d2 = item.querySelector('.message-dot'); if (d2) d2.classList.add('filled'); }
-                });
+                document.querySelectorAll('.message-item').forEach(function(item, j) { item.classList.remove('active', 'current'); const dot = item.querySelector('.message-dot'); if (dot) dot.classList.remove('filled'); if (j <= i) { item.classList.add('active'); const d2 = item.querySelector('.message-dot'); if (d2) d2.classList.add('filled'); } });
                 d.classList.add('current');
             });
             c.appendChild(d);
@@ -320,8 +285,7 @@
         const c = document.getElementById('timelineContainer'); if (!c) return;
         SITE_CONFIG.timeline.items.forEach(function(item, i) {
             const d = document.createElement('div');
-            d.className = 'timeline-item reveal';
-            d.style.animationDelay = (i * 0.2) + 's';
+            d.className = 'timeline-item reveal'; d.style.animationDelay = (i * 0.2) + 's';
             d.innerHTML = `<div class="timeline-card"><div class="timeline-card-inner"><div class="timeline-icon"><span>${i + 1}</span></div><div class="timeline-card-content"><span class="timeline-date">${item.date}</span><h3 class="timeline-memory-title">${item.title}</h3><p class="timeline-description">${item.description}</p></div></div></div><div class="timeline-dot"></div>`;
             c.appendChild(d);
         });
@@ -346,29 +310,18 @@
     }
 
     function animateLetter() {
-        document.querySelectorAll('.letter-text-line').forEach(function(l, i) {
-            l.style.opacity = '0'; l.style.transform = 'translateY(20px)';
-            setTimeout(function() { l.style.transition = 'all 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)'; l.style.opacity = '1'; l.style.transform = 'translateY(0)'; }, 300 + (i * 200));
-        });
+        document.querySelectorAll('.letter-text-line').forEach(function(l, i) { l.style.opacity = '0'; l.style.transform = 'translateY(20px)'; setTimeout(function() { l.style.transition = 'all 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)'; l.style.opacity = '1'; l.style.transform = 'translateY(0)'; }, 300 + (i * 200)); });
     }
 
     function createHearts() {
         const c = document.getElementById('letterHeartsBg'); if (!c) return;
-        const h = ['🤍','❤️','💕','💗','💖','✨','🕊️','💫'];
-        for (let i = 0; i < 15; i++) {
-            const s = document.createElement('span'); s.className = 'flying-heart'; s.textContent = h[Math.floor(Math.random()*h.length)];
-            s.style.cssText = `position:absolute;left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${Math.random()*16+8}px;animation:heartFloat ${Math.random()*4+3}s ease-in-out infinite;animation-delay:${Math.random()*3}s;opacity:${Math.random()*0.4+0.1};pointer-events:none;`;
-            c.appendChild(s);
-        }
+        const h = ['🤍','❤️','💕','💗','💖'];
+        for (let i = 0; i < 12; i++) { const s = document.createElement('span'); s.className = 'flying-heart'; s.textContent = h[Math.floor(Math.random()*h.length)]; s.style.cssText = `position:absolute;left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${Math.random()*14+8}px;animation:heartFloat ${Math.random()*4+3}s ease-in-out infinite;animation-delay:${Math.random()*3}s;opacity:${Math.random()*0.3+0.1};pointer-events:none;`; c.appendChild(s); }
     }
 
     function createParticles() {
         const c = document.getElementById('letterParticlesBg'); if (!c) return;
-        for (let i = 0; i < 15; i++) {
-            const p = document.createElement('div'); p.className = 'golden-particle';
-            p.style.cssText = `position:absolute;width:${Math.random()*3+1}px;height:${Math.random()*3+1}px;background:#c9a96e;border-radius:50%;left:${Math.random()*100}%;top:${Math.random()*100}%;animation:particleGlow ${Math.random()*3+2}s ease-in-out infinite;animation-delay:${Math.random()*2}s;box-shadow:0 0 ${Math.random()*4+2}px rgba(201,169,110,0.6);pointer-events:none;`;
-            c.appendChild(p);
-        }
+        for (let i = 0; i < 10; i++) { const p = document.createElement('div'); p.className = 'golden-particle'; p.style.cssText = `position:absolute;width:${Math.random()*3+1}px;height:${Math.random()*3+1}px;background:#c9a96e;border-radius:50%;left:${Math.random()*100}%;top:${Math.random()*100}%;animation:particleGlow ${Math.random()*3+2}s ease-in-out infinite;animation-delay:${Math.random()*2}s;box-shadow:0 0 ${Math.random()*4+2}px rgba(201,169,110,0.6);pointer-events:none;`; c.appendChild(p); }
     }
 
     function setupSurpriseBox() {
@@ -377,10 +330,7 @@
         gb.addEventListener('click', function() {
             if (!go) {
                 gb.classList.add('open'); createSparkles(gb);
-                setTimeout(function() {
-                    if (sr) sr.classList.add('active'); if (sm) sm.textContent = SITE_CONFIG.surpriseBox.message;
-                    if (fi) { fi.innerHTML = ''; SITE_CONFIG.surpriseBox.items.forEach(function(t, i) { const s = document.createElement('span'); s.className = 'floating-item'; s.textContent = t; s.style.animationDelay = (i*0.3)+'s'; fi.appendChild(s); }); }
-                }, 700);
+                setTimeout(function() { if (sr) sr.classList.add('active'); if (sm) sm.textContent = SITE_CONFIG.surpriseBox.message; if (fi) { fi.innerHTML = ''; SITE_CONFIG.surpriseBox.items.forEach(function(t, i) { const s = document.createElement('span'); s.className = 'floating-item'; s.textContent = t; s.style.animationDelay = (i*0.3)+'s'; fi.appendChild(s); }); } }, 700);
                 go = true;
             }
         });
@@ -388,11 +338,7 @@
 
     function createSparkles(el) {
         const r = el.getBoundingClientRect(), cx = r.left + r.width/2, cy = r.top + r.height/2;
-        for (let i = 0; i < 10; i++) {
-            const s = document.createElement('div'); s.className = 'sparkle';
-            s.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;width:${Math.random()*4+2}px;height:${Math.random()*4+2}px;background:#c9a96e;border-radius:50%;pointer-events:none;z-index:9999;animation:sparkleFly ${Math.random()*1+0.5}s ease-out forwards;animation-delay:${Math.random()*0.3}s;`;
-            document.body.appendChild(s); setTimeout(function() { s.remove(); }, 2000);
-        }
+        for (let i = 0; i < 8; i++) { const s = document.createElement('div'); s.className = 'sparkle'; s.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;width:${Math.random()*4+2}px;height:${Math.random()*4+2}px;background:#c9a96e;border-radius:50%;pointer-events:none;z-index:9999;animation:sparkleFly ${Math.random()*1+0.5}s ease-out forwards;animation-delay:${Math.random()*0.3}s;`; document.body.appendChild(s); setTimeout(function() { s.remove(); }, 2000); }
     }
 
     function setupFinalButtons() {
@@ -402,23 +348,16 @@
     }
 
     function createConfetti() {
-        const colors = ['#c9a96e','#c4808a','#6b1d2a','#e8e0d5','#d4ba8a'];
+        const colors = ['#c9a96e','#c4808a','#6b1d2a','#e8e0d5'];
         const c = document.createElement('div'); c.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
-        for (let i = 0; i < 40; i++) {
-            const f = document.createElement('div'); const s = Math.random()*6+3;
-            f.style.cssText = `position:absolute;width:${s}px;height:${s*(Math.random()*0.6+0.4)}px;background:${colors[Math.floor(Math.random()*colors.length)]};left:${Math.random()*100}%;top:-30px;border-radius:${Math.random()>0.5?'50%':'2px'};animation:confettiFall ${Math.random()*3+2.5}s ease-in forwards;animation-delay:${Math.random()*1.5}s;opacity:0.9;transform:rotate(${Math.random()*360}deg);`;
-            c.appendChild(f);
-        }
+        for (let i = 0; i < 30; i++) { const f = document.createElement('div'); const s = Math.random()*5+3; f.style.cssText = `position:absolute;width:${s}px;height:${s*(Math.random()*0.6+0.4)}px;background:${colors[Math.floor(Math.random()*colors.length)]};left:${Math.random()*100}%;top:-30px;border-radius:${Math.random()>0.5?'50%':'2px'};animation:confettiFall ${Math.random()*3+2.5}s ease-in forwards;animation-delay:${Math.random()*1.5}s;opacity:0.9;transform:rotate(${Math.random()*360}deg);`; c.appendChild(f); }
         document.body.appendChild(c); setTimeout(function() { c.remove(); }, 6000);
     }
 
     function setupMusicPlayer() {
         const bm = document.getElementById('bgMusic'), mtg = document.getElementById('musicToggle'), vtg = document.getElementById('volumeToggle'), vs = document.getElementById('volumeSlider'), vsc = document.getElementById('volumeSliderContainer');
         if (!bm || !mtg) return;
-        mtg.addEventListener('click', function() {
-            if (mp) { bm.pause(); mtg.classList.remove('playing'); mp = false; }
-            else { pauseAllVideos(); bm.currentTime = mt; bm.play().then(function() { mtg.classList.add('playing'); mp = true; }).catch(function() {}); }
-        });
+        mtg.addEventListener('click', function() { if (mp) { bm.pause(); mtg.classList.remove('playing'); mp = false; } else { pauseAllVideos(); bm.currentTime = mt; bm.play().then(function() { mtg.classList.add('playing'); mp = true; }).catch(function() {}); } });
         if (vtg) vtg.addEventListener('click', function() { bm.muted = !bm.muted; vtg.classList.toggle('muted'); if (vsc) vsc.classList.toggle('visible'); });
         if (vs) vs.addEventListener('input', function() { bm.volume = vs.value / 100; });
     }
@@ -438,16 +377,12 @@
     function setupStartButton() { const btn = document.getElementById('startButton'); if (btn) btn.addEventListener('click', function() { const v = document.getElementById('videos'); if (v) v.scrollIntoView({ behavior: 'smooth' }); }); }
 
     function setupScrollAnimations() {
-        const obs = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) { entry.target.classList.add('visible'); }
-            });
-        }, { threshold: 0.1 });
+        const obs = new IntersectionObserver(function(entries) { entries.forEach(function(entry) { if (entry.isIntersecting) { entry.target.classList.add('visible'); } }); }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
     }
 
     function createHeroParticles() {
         const c = document.getElementById('heroParticles'); if (!c) return;
-        for (let i = 0; i < 15; i++) { const p = document.createElement('div'); p.className = 'hero-particle'; const s = Math.random()*3+1; p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*10}s;animation-duration:${Math.random()*10+8}s;opacity:${Math.random()*0.4+0.1};`; c.appendChild(p); }
+        for (let i = 0; i < 10; i++) { const p = document.createElement('div'); p.className = 'hero-particle'; const s = Math.random()*2+1; p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*10}s;animation-duration:${Math.random()*10+8}s;opacity:${Math.random()*0.3+0.1};`; c.appendChild(p); }
     }
 })();
