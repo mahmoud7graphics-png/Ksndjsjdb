@@ -148,6 +148,7 @@ body.loading { overflow: hidden; }
 .gallery-caption-container { padding: 14px 8px 6px 8px; text-align: center; opacity: 1; transition: all var(--transition-medium); margin-top: 2px; }
 .gallery-caption { font-family: var(--font-body); font-size: 0.85rem; color: var(--color-text-muted); font-weight: 300; letter-spacing: 0.04em; line-height: 1.5; transition: all var(--transition-medium); }
 .gallery-item:hover .gallery-caption { color: var(--color-accent); text-shadow: 0 0 20px rgba(201, 169, 110, 0.3); }
+.gallery-img-placeholder { width: 100%; height: 100%; object-fit: cover; display: block; background: var(--color-surface); }
 
 #galleryTitle { font-family: 'Marhey', 'Playfair Display', var(--font-display), serif !important; font-size: 2.8rem !important; font-weight: 600 !important; letter-spacing: 0.04em !important; line-height: 1.6 !important; background: linear-gradient(135deg, #e8e0d5 0%, #c9a96e 40%, #d4a08a 70%, #e8c8b0 100%) !important; -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; background-clip: text !important; position: relative !important; display: inline-block !important; }
 #galleryTitle::after { content: '' !important; position: absolute !important; bottom: -12px !important; left: 50% !important; transform: translateX(-50%) !important; width: 70px !important; height: 2px !important; background: linear-gradient(90deg, transparent, #c9a96e, #d4a08a, #c9a96e, transparent) !important; border-radius: 2px !important; }
@@ -213,7 +214,6 @@ body.loading { overflow: hidden; }
 
 .letter-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9997; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all var(--transition-medium); }
 .letter-modal.open { opacity: 1; visibility: visible; }
-.letter-modal .letter-paper, .letter-modal .letter-content, .letter-modal .letter-signature, .letter-modal .letter-close { display: none !important; }
 .letter-romantic-container { position: relative; width: 92%; max-width: 560px; max-height: 85vh; overflow-y: auto; z-index: 1; }
 .letter-hearts-bg, .letter-particles-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; border-radius: var(--radius-lg); }
 @keyframes heartFloat { 0%, 100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.2; } 25% { transform: translateY(-30px) rotate(10deg) scale(1.3); opacity: 0.5; } 50% { transform: translateY(-15px) rotate(-5deg) scale(0.9); opacity: 0.3; } 75% { transform: translateY(-40px) rotate(15deg) scale(1.2); opacity: 0.6; } }
@@ -294,9 +294,7 @@ body.loading { overflow: hidden; }
 
 @media (max-width: 768px) {
     html { font-size: 14px; }
-    .hero-title { font-size: 2.6rem; }
-    .hero-subtitle { font-size: 1rem; }
-    .hero-description { font-size: 0.9rem; }
+    .hero-title { font-size: 2.6rem; } .hero-subtitle { font-size: 1rem; } .hero-description { font-size: 0.9rem; }
     .section { padding: 70px 20px; }
     .section-title { font-size: 1.8rem; margin-bottom: 40px; }
     .videos-grid { grid-template-columns: 1fr; gap: 28px; }
@@ -308,9 +306,7 @@ body.loading { overflow: hidden; }
     .timeline-dot { right: 18px; transform: none; }
     .timeline-card-inner { padding: 20px 16px; }
     .letter-romantic-card { padding: 36px 20px 32px; }
-    .letter-romantic-title { font-size: 1.5rem; }
-    .letter-text-line { font-size: 0.95rem; }
-    .letter-romantic-signature { font-size: 1.2rem; }
+    .letter-romantic-title { font-size: 1.5rem; } .letter-text-line { font-size: 0.95rem; } .letter-romantic-signature { font-size: 1.2rem; }
     .corner-heart { font-size: 1rem; }
     .final-title { font-size: 2.3rem; }
     .final-buttons { flex-direction: column; align-items: center; }
@@ -343,4 +339,4 @@ body.loading { overflow: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
-}
+                        }
